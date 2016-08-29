@@ -1,1 +1,0 @@
-[Siteleaf](http://siteleaf.com) theme for [sawyerhollenshead.com](http://sawyerhollenshead.com)

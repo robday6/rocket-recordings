@@ -1,30 +1,70 @@
-<!DOCTYPE html>
-<html class='no-js' lang='en'>
-  <head>
-    <meta charset='utf-8'>
-    <title>{{site.title}} | {{title}}</title>
-    <meta content='[@sawyerh] Brooklyn + Designer + Developer + Cool guy' name='description'>
-    <meta content='width=device-width' name='viewport'>
-    <link href='/favicon.ico' rel='shortcut icon'>
-    <link href="//cdn.symbolset.com/fd57d354427fe42c496542a9ccca79245f49f977/symbolset.css" rel="stylesheet">
-    <link href='/assets/css/style.css?v=06052013' rel='stylesheet'>
-    <link href="{{site.feed_url}}" rel="alternate" type="application/rss+xml" title="Sawyer Hollenshead - Writing" />
-
-    <!--[if lt IE 9]>
-      <script src='//html5shiv.googlecode.com/svn/trunk/html5.js'></script>
-    <![endif]-->
-    <script src='//use.typekit.net/gia1nam.js'></script>
-    <script>try{Typekit.load();}catch(e){}</script>
-    <script>
-      var _sf_startpt=(new Date()).getTime()
-      var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-3634425-8']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();
-    </script>
-  </head>
-  <body>
-    
-    <nav class='primary'>
-      <a class='nav-item nav-home{% if page.slug == "portfolio" %} is-current{% endif %}' href='/' title='Portfolio'>S</a>
-      <a class='nav-item nav-about ss-icon' href='/about' title="About">user</a>
-      <a class='nav-item nav-writing ss-icon' href='/writing' title="Writing">pencil</a>
-      <a class='nav-item nav-photos ss-icon' href='http://life.sawyerhollenshead.com' title='Photos'>camera</a>
-    </nav>
+{% if page.color %}
+  {% assign background = page.color %}
+{% elsif include.page == 'blog' %}
+  <!-- blog index, inherit from first tag of first post -->
+  {% assign first_post = site.posts | first %}
+  {% assign post_tag_downcase = first_post.tags | first | downcase %}
+  {% for site_tag in site.blog_tags %}
+    {% assign site_tag_title = site_tag.title | downcase %}
+    {% if site_tag_title == post_tag_downcase %}
+      {% if site_tag.color %}
+        {% assign background = site_tag.color %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% elsif include.page == 'permalink' %}
+  <!-- blog permalink, inherit from first tag -->
+  {% assign post_tag_downcase = page.tags | first | downcase %}
+  {% for site_tag in site.blog_tags %}
+    {% assign site_tag_title = site_tag.title | downcase %}
+    {% if site_tag_title == post_tag_downcase %}
+      {% if site_tag.color %}
+        {% assign background = site_tag.color %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+<div class="headerWrap bg--{{ background | default: 'lightest-gray' }}">
+  <header class="header{% if page.extended_header %} header--extended{% endif %}">
+    <ul class="header__items">
+      {% for item in site.data.navigation.header %}
+      <li class="header__item">
+        <a href="{{ item.url }}" class="header__link">{{ item.title }}</a>
+      </li>
+      {% endfor %}
+      <li class="header__item">
+        <a href="https://manage.siteleaf.com/signup" class="header__link header__link--button">Sign up</a>
+      </li>
+      <li class="header__item header__item--mobile">
+        <a id="mobileNavOpen" class="header__link">Menu</a>
+      </li>
+    </ul>
+    <a href="/" class="header__home"><img src="{{ site.logo }}" class="header__logo" alt="{{ site.title }}" /></a>
+    <h1 class="header__title">{{ page.header_title | default: page.title }}</h1>
+    {% if page.subtitle %}<div class="header__subtitle">{{ page.subtitle | markdownify }}</div>{% endif %}
+    {% if page.header_button and page.url != '/' %}
+      <div class="header__buttonWrap">
+        <a href="{{ page.header_button.url }}" class="bg--{{ page.header_button.color | default: 'blue' }} header__button">{{ page.header_button.title }}</a>
+      </div>
+    {% endif %}
+  </header>
+  <nav class="mobileNav">
+    <header class="header">
+      <ul class="header__items">
+        <li class="header__item header__item--mobile">
+          <a id="mobileNavClose" class="header__link">Close</a>
+        </li>
+      </ul>
+      <ul class="mobileNav__items">
+        {% for item in site.data.navigation.header %}
+        <li class="mobileNav__item">
+          <a href="{{ item.url }}" class="mobileNav__link">{{ item.title }}</a>
+        </li>
+        {% endfor %}
+        <li class="mobileNav__item">
+          <a href="https://manage.siteleaf.com/signup" class="mobileNav__link">Sign up</a>
+        </li>
+      </ul>
+    </header>
+  </nav>
+</div>
